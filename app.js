@@ -4,18 +4,27 @@ const URL = 'https://swapi.co/api/people';
 const searchTerm = process.argv[2];
 // const test ="jar jar"
 
+let films, person;
+
 axios.get(`${URL}/?search=${searchTerm}`)
   .then(res => {
-    const filmsArray  = res.data.results[0].films;
+    const person  = res.data.results[0];
+    const films = person.films;
     
-    const promises = filmsArray.map(filmUrl => axios.get(filmUrl));
+    const promises = films.map(filmUrl => axios.get(filmUrl));
     return Promise.all(promises);
   })
   .then(responses => {
     let films = responses.map(response =>{
-      return{ title: response.data.title, releaseDAte: response.data.release_date };
+      return{ title: response.data.title, releaseDate: response.data.release_date };
     });
-    console.log(films);
+    
+
+    films =films.sort((a,b) => a.releaseDate > b.releaseDate);
+    console.log(person, films);
+    person.starships;
+
+    
   })
   .catch((error) => console.log(error.message ,'error'));
 
